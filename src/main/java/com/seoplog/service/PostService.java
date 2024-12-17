@@ -1,7 +1,10 @@
 package com.seoplog.service;
 
 import com.seoplog.domain.post.Post;
-import com.seoplog.domain.post.request.PostCreateRequest;
+import com.seoplog.domain.post.PostEditor;
+import com.seoplog.domain.post.request.PostCreate;
+import com.seoplog.domain.post.request.PostSearch;
+import com.seoplog.domain.post.request.PostUpdate;
 import com.seoplog.domain.post.response.PostResponse;
 import com.seoplog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +19,9 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final EntityFinder entityFinder;
 
-    public PostResponse write(PostCreateRequest request) {
+    public PostResponse write(PostCreate request) {
 
         Post post = request.toEntity();
         Post savedPost = postRepository.save(post);
@@ -25,28 +29,37 @@ public class PostService {
         return PostResponse.of(savedPost);
     }
 
-    public PostResponse findById(Long id) {
-        return PostResponse.of(postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다.")));
+    @Transactional(readOnly = true)
+    public PostResponse findPost(Long id) {
+        return PostResponse.of(entityFinder.getPostId(id));
     }
 
-    public List<PostResponse> findAll() {
-        return postRepository.findAll()
+    @Transactional(readOnly = true)
+    public List<PostResponse> findAll(PostSearch postSearch) {
+        return postRepository.getList(postSearch)
                 .stream()
                 .map(PostResponse::of)
                 .toList();
     }
 
-    public void update(Long id, PostCreateRequest request) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+    public PostResponse update(Long id, PostUpdate request) {
+        Post post = entityFinder.getPostId(id);
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
-        post.update(request.getTitle(), request.getContent());
-        postRepository.save(post);
+        PostEditor postEditor = editorBuilder
+                .title(request.getTitle())
+                .content(request.getContent())
+                .build();
+
+        post.update(postEditor);
+
+        return PostResponse.of(post);
     }
 
-    public void deleteById(Long id) {
-        postRepository.deleteById(id);
+    public void deletePost(Long id) {
+        Post post = entityFinder.getPostId(id);
+
+        postRepository.delete(post);
     }
 }
 
