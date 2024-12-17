@@ -7,9 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.seoplog.domain.post.PostEditor.*;
+
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "posts")
 public class Post extends BaseEntity {
 
     @Id
@@ -27,8 +30,18 @@ public class Post extends BaseEntity {
         this.content = content;
     }
 
-    public void update(String newTitle, String newContent) {
-        this.title = newTitle;
-        this.content = newContent;
+    public PostEditorBuilder toEditor() {
+        return PostEditor.builder()
+                .title(title)
+                .content(content);
+    }
+
+    public void update(PostEditor editor) {
+        if (editor.getTitle() != null) {
+            title = editor.getTitle();
+        }
+        if (editor.getContent() != null) {
+            content = editor.getContent();
+        }
     }
 }
