@@ -69,6 +69,7 @@ public class PostControllerDocsTest extends RestDocsSupport{
                 ));
     }
 
+
     @DisplayName("게시글 조회 API")
     @Test
     void getPost() throws Exception {
