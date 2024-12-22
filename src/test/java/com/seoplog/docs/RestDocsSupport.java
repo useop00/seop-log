@@ -22,6 +22,7 @@ public abstract class RestDocsSupport {
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider provider) {
+
         // RestDocs의 URI 설정 추가
         UriConfigurer configurer = documentationConfiguration(provider)
                 .uris()
