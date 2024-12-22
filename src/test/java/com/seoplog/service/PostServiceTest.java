@@ -6,7 +6,8 @@ import com.seoplog.domain.post.request.PostSearch;
 import com.seoplog.domain.post.request.PostUpdate;
 import com.seoplog.domain.post.response.PostResponse;
 import com.seoplog.exception.PostNotFound;
-import com.seoplog.repository.PostRepository;
+import com.seoplog.repository.post.PostRepository;
+import com.seoplog.service.post.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,21 @@ class PostServiceTest {
         Post post = postRepository.findAll().get(0);
         assertThat(post.getTitle()).isEqualTo("제목");
         assertThat(post.getContent()).isEqualTo("내용");
+    }
+
+    @DisplayName("게시글 생성 시 Auditing 테스트")
+    @Test
+    void auditingTest() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        //when & //then
+        assertThat(savedPost.getCreatedDateTime()).isNotNull();
     }
 
     @Test
