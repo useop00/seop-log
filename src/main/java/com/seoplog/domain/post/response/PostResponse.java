@@ -1,5 +1,6 @@
 package com.seoplog.domain.post.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.seoplog.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,8 @@ public class PostResponse {
     private final Long id;
     private final String title;
     private final String content;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private final LocalDateTime createDateTime;
 
     @Builder
