@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoplog.domain.post.Post;
 import com.seoplog.domain.post.request.PostCreate;
 import com.seoplog.domain.post.request.PostUpdate;
-import com.seoplog.repository.PostRepository;
+import com.seoplog.repository.post.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PostControllerTest {
+class PostControllerTest{
 
     @Autowired
     private ObjectMapper objectMapper;
