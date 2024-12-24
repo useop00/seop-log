@@ -42,26 +42,7 @@ class PostControllerTest{
     }
 
     @Test
-    void test() throws Exception {
-
-        PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
-
-        mockMvc.perform(post("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(json)
-                )
-                .andExpect(status().isOk())
-                .andDo(print());
-
-
-    }
-    @Test
-    @DisplayName("제목이 없으면 실패한다.")
+    @DisplayName("글 작성 요청시 제목이 없으면 실패한다.")
     void titleNullTest() throws Exception {
         PostCreate request = PostCreate.builder()
                 .content("내용입니다.")
@@ -80,7 +61,7 @@ class PostControllerTest{
     }
 
     @Test
-    @DisplayName("/posts 요청시 DB에 값이 저장된다.")
+    @DisplayName("글 작성 요청시 DB에 값이 저장된다.")
     void savedDB() throws Exception {
         // when
         PostCreate request = PostCreate.builder()
@@ -102,7 +83,7 @@ class PostControllerTest{
     }
 
     @Test
-    @DisplayName("제목은 20글자 이하로 작성해야한다.")
+    @DisplayName("글의 제목은 20글자 이하로 작성해야한다.")
     void validateTitleLength() throws Exception {
         PostCreate request = PostCreate.builder()
                 .title("1231552346246212312321451352346")
