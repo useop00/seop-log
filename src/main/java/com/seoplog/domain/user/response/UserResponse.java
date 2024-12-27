@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 public class UserResponse {
 
-    private final String account;
+    private final String username;
     private final String name;
     private final String password;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private final LocalDateTime createDateTime;
 
     @Builder
-    private UserResponse(String account, String name, String password, LocalDateTime createDateTime) {
-        this.account = account;
+    private UserResponse(String username, String name, String password, LocalDateTime createDateTime) {
+        this.username = username;
         this.name = name;
         this.password = password;
         this.createDateTime = createDateTime;
@@ -26,7 +26,7 @@ public class UserResponse {
 
     public static UserResponse of(User user) {
         return UserResponse.builder()
-                .account(user.getAccount())
+                .username(user.getUsername())
                 .name(user.getName())
                 .password(user.getPassword())
                 .build();
