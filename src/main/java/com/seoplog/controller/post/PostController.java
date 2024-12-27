@@ -5,7 +5,7 @@ import com.seoplog.domain.post.request.PostCreate;
 import com.seoplog.domain.post.request.PostSearch;
 import com.seoplog.domain.post.request.PostUpdate;
 import com.seoplog.domain.post.response.PostResponse;
-import com.seoplog.service.PostService;
+import com.seoplog.service.post.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ public class PostController {
 
     @PostMapping("/posts")
     public ApiResponse<PostResponse> post(@RequestBody @Valid PostCreate request) {
-
         return ApiResponse.ok(postService.write(request));
     }
 
