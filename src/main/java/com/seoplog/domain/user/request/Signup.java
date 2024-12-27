@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Signup {
 
     @NotBlank(message = "아이디는 필수입니다.")
-    private String account;
+    private String username;
 
     @NotBlank(message = "이름은 필수입니다.")
     private String name;
@@ -20,15 +20,15 @@ public class Signup {
     private String password;
 
     @Builder
-    private Signup(String account, String name, String password) {
-        this.account = account;
+    private Signup(String username, String name, String password) {
+        this.username = username;
         this.name = name;
         this.password = password;
     }
 
     public User toEntity(String encodedPassword) {
         return User.builder()
-                .account(account)
+                .username(username)
                 .name(name)
                 .password(encodedPassword)
                 .build();
