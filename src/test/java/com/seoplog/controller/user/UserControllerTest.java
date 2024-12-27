@@ -35,7 +35,7 @@ class UserControllerTest {
     void exists() throws Exception {
         //given
         userRepository.save(User.builder()
-                .account("wss3325")
+                .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build());
@@ -43,7 +43,7 @@ class UserControllerTest {
         //when
         String requestBody = """
                {
-                    "account": "wss3325",
+                    "username": "wss3325",
                     "name": "seop",
                     "password": "1234"
                }
