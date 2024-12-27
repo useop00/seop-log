@@ -1,17 +1,16 @@
 package com.seoplog.service.user;
 
-import com.seoplog.crypto.PasswordEncoder;
 import com.seoplog.domain.user.User;
 import com.seoplog.domain.user.request.Login;
 import com.seoplog.domain.user.request.Signup;
-import com.seoplog.domain.user.response.UserResponse;
-import com.seoplog.exception.ExistsAccountException;
-import com.seoplog.exception.InvalidSigningInformation;
+import com.seoplog.domain.user.response.LoginResponse;
+import com.seoplog.exception.ExistsUsernameException;
 import com.seoplog.repository.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +30,9 @@ class UserServiceTest {
     @Test
     void signupUser() throws Exception {
         //given
+        BCryptPasswordEncoder encode = new BCryptPasswordEncoder();
         Signup signup = Signup.builder()
-                .account("wss3325")
+                .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build();
@@ -43,80 +43,77 @@ class UserServiceTest {
 
         //then
         assertThat(userRepository.count()).isEqualTo(1);
-        assertThat(user.getAccount()).isEqualTo("wss3325");
+        assertThat(user.getUsername()).isEqualTo("wss3325");
         assertThat(user.getName()).isEqualTo("seop");
-        assertThat(user.getPassword()).isNotEqualTo("1234");
-        assertThat(user.getPassword()).isNotNull();
-
+        assertThat(encode.matches("1234", user.getPassword())).isTrue();
     }
 
     @DisplayName("회원가입시 중복된 아이디는 예외처리한다.")
     @Test
-    void existsAccount() throws Exception {
+    void existsUsername() throws Exception {
         //given
         User user = User.builder()
-                .account("wss3325")
+                .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build();
         userRepository.save(user);
 
         Signup signup = Signup.builder()
-                .account("wss3325")
+                .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build();
 
         //expected
         assertThatThrownBy(() -> userService.signup(signup))
-                .isInstanceOf(ExistsAccountException.class);
+                .isInstanceOf(ExistsUsernameException.class);
     }
 
-    @DisplayName("비밀번호를 암호화 해서 로그인한다.")
+    @DisplayName("로그인 성공")
     @Test
-    void signInUser() throws Exception {
-        //given
-        PasswordEncoder encoder = new PasswordEncoder();
-        String encryptedPassword = encoder.encrpyt("1234");
-
-        User user = User.builder()
-                .account("wss3325")
-                .name("seop")
-                .password(encryptedPassword)
-                .build();
-        userRepository.save(user);
-
-        Login login = Login.builder()
-                .account(user.getAccount())
-                .password("1234")
-                .build();
-
-        //when
-        UserResponse userId = userService.signIn(login);
-
-        //then
-        assertThat(userId).isNotNull();
-    }
-
-    @DisplayName("비밀번호가 틀리면 로그인되지 않는다.")
-    @Test
-    void notEqualsPassword() throws Exception {
+    void loginSuccess() throws Exception {
         //given
         Signup signup = Signup.builder()
-                .account("wss3325")
+                .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build();
         userService.signup(signup);
 
         Login login = Login.builder()
-                .account(signup.getAccount())
-                .password("3454")
+                .username("wss3325")
+                .password("1234")
                 .build();
 
-        // expected
-        assertThatThrownBy(() -> userService.signIn(login))
-                .isInstanceOf(InvalidSigningInformation.class);
+        //when
+        LoginResponse response = userService.login(login);
 
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getAccessToken()).isNotEmpty();
+        assertThat(response.getRefreshToken()).isNotEmpty();
+    }
+
+    @DisplayName("비밀번호가 일치하지 않으면 로그인이 실패한다.")
+    @Test
+    void loginFail() throws Exception {
+        //given
+        Signup signup = Signup.builder()
+                .username("wss3325")
+                .name("seop")
+                .password("1234")
+                .build();
+        userService.signup(signup);
+
+        Login login = Login.builder()
+                .username("wss3325")
+                .password("333333")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> userService.login(login))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("비밀번호가 일치하지 않습니다.");
     }
 }
