@@ -29,8 +29,8 @@ public class ExceptionController {
 
     @ExceptionHandler(seopLogException.class)
     public ResponseEntity<ErrorResponse> seopLogException(seopLogException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(
-                ErrorResponse.of(
+        return ResponseEntity.status(e.getStatusCode())
+                .body(ErrorResponse.of(
                         String.valueOf(e.getStatusCode()),
                         e.getMessage()
                 )
