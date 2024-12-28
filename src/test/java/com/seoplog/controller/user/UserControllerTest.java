@@ -1,5 +1,6 @@
 package com.seoplog.controller.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seoplog.domain.user.User;
 import com.seoplog.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,6 +27,9 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
@@ -34,23 +39,15 @@ class UserControllerTest {
     @Test
     void exists() throws Exception {
         //given
-        userRepository.save(User.builder()
+        User user = userRepository.save(User.builder()
                 .username("wss3325")
                 .name("seop")
                 .password("1234")
                 .build());
+        String requestBody = objectMapper.writeValueAsString(user);
 
-        //when
-        String requestBody = """
-               {
-                    "username": "wss3325",
-                    "name": "seop",
-                    "password": "1234"
-               }
-               """;
-
-        //then
-        mockMvc.perform(post("/signup")
+        //when & then
+        mockMvc.perform(post("/auth/signup")
                         .contentType(APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
