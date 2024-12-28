@@ -13,6 +13,7 @@ public class UserResponse {
     private final String username;
     private final String name;
     private final String password;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private final LocalDateTime createDateTime;
 
@@ -29,6 +30,7 @@ public class UserResponse {
                 .username(user.getUsername())
                 .name(user.getName())
                 .password(user.getPassword())
+                .createDateTime(user.getCreatedDateTime())
                 .build();
     }
 }
