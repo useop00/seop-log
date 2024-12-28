@@ -1,6 +1,7 @@
 package com.seoplog.domain.user;
 
 import com.seoplog.domain.BaseEntity;
+import com.seoplog.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @Getter
@@ -21,19 +24,23 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String account;
+    private String username;
 
     private String name;
 
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private final List<Session> sessions = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private final List<Post> posts = new ArrayList<>();
 
     @Builder
-    private User(String account, String name, String password) {
-        this.account = account;
+    private User(String username, String name, String password, Role role) {
+        this.username = username;
         this.name = name;
         this.password = password;
+        this.role = role;
     }
 }
