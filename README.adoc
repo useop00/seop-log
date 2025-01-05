@@ -1,0 +1,31 @@
+ifndef::snippets[]
+:snippets:../../build/generated/snippets
+endif::[]
+= seopLog REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Post-create]]
+=== 게시글 작성
+
+==== HTTP Request
+include::{snippets}/post-create/http-request.adoc[]
+include::{snippets}/post-create/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/post-create/http-response.adoc[]
+include::{snippets}/post-create/response-fields.adoc[]
+
+[[Post-get]]
+=== 게시글 단건 조회
+
+==== HTTP Request
+include::{snippets}/post-get/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/post-get/http-response.adoc[]
+include::{snippets}/post-get/response-fields.adoc[]
